@@ -1,0 +1,326 @@
+#!/usr/bin/env bash
+
+# Include bashcolor
+cat > /tmp/bashcolor << EOF
+#!/bin/sh
+
+# Reset
+Color_off='\e[0m'
+
+# Regular Colors
+Black='\e[0;30m'        # Black
+Red='\e[0;31m'          # Red
+Green="\e[0;32m"        # Green
+Yellow='\e[0;33m'       # Yellow
+Blue='\e[0;34m'         # Blue
+Purple='\e[0;35m'       # Purple
+Cyan='\e[0;36m'         # Cyan
+White='\e[0;37m'        # White
+
+# Bold
+BBlack='\e[1;30m'       # Black
+BRed='\e[1;31m'         # Red
+BGreen='\e[1;32m'       # Green
+BYellow='\e[1;33m'      # Yellow
+BBlue='\e[1;34m'        # Blue
+BPurple='\e[1;35m'      # Purple
+BCyan='\e[1;36m'        # Cyan
+BWhite='\e[1;37m'       # White
+
+# Underline
+UBlack='\e[4;30m'       # Black
+URed='\e[4;31m'         # Red
+UGreen='\e[4;32m'       # Green
+UYellow='\e[4;33m'      # Yellow
+UBlue='\e[4;34m'        # Blue
+UPurple='\e[4;35m'      # Purple
+UCyan='\e[4;36m'        # Cyan
+UWhite='\e[4;37m'       # White
+
+# Background
+On_Black='\e[40m'       # Black
+On_Red='\e[41m'         # Red
+On_Green='\e[42m'       # Green
+On_Yellow='\e[43m'      # Yellow
+On_Blue='\e[44m'        # Blue
+On_Purple='\e[45m'      # Purple
+On_Cyan='\e[46m'        # Cyan
+On_White='\e[47m'       # White
+
+# High Intensty
+IBlack='\e[0;90m'       # Black
+IRed='\e[0;91m'         # Red
+IGreen='\e[0;92m'       # Green
+IYellow='\e[0;93m'      # Yellow
+IBlue='\e[0;94m'        # Blue
+IPurple='\e[0;95m'      # Purple
+ICyan='\e[0;96m'        # Cyan
+IWhite='\e[0;97m'       # White
+
+# Bold High Intensty
+BIBlack='\e[1;90m'      # Black
+BIRed='\e[1;91m'        # Red
+BIGreen='\e[1;92m'      # Green
+BIYellow='\e[1;93m'     # Yellow
+BIBlue='\e[1;94m'       # Blue
+BIPurple='\e[1;95m'     # Purple
+BICyan='\e[1;96m'       # Cyan
+BIWhite='\e[1;97m'      # White
+
+# High Intensty backgrounds
+On_IBlack='\e[0;100m'   # Black
+On_IRed='\e[0;101m'     # Red
+On_IGreen='\e[0;102m'   # Green
+On_IYellow='\e[0;103m'  # Yellow
+On_IBlue='\e[0;104m'    # Blue
+On_IPurple='\e[10;95m'  # Purple
+On_ICyan='\e[0;106m'    # Cyan
+On_IWhite='\e[0;107m'   # White
+
+test_suite ()
+{
+    echo
+    echo "Test reset function"
+    echo "=="
+
+    echo -e ${BRed}"Set to Bold Red"${Color_off}
+    echo -e "Reset to normal"
+
+    echo
+    echo "Test effects of all kinds of properties"
+    echo "=="
+
+    echo -e ${Green}"Regular Green"${Color_off}
+    echo -e ${BGreen}"Bold Green"${Color_off}
+    echo -e ${UGreen}"Underline Green"${Color_off}
+    echo -e ${On_Green}"Green Background"${Color_off}
+    echo -e ${IGreen}"High Intensty Green"${Color_off}
+    echo -e ${BIGreen}"Bold High Intensty Green"${Color_off}
+    echo -e ${On_IGreen}"Green High Intensty Background"${Color_off}
+}
+EOF
+. /tmp/bashcolor
+
+
+echo_info ()
+{
+    echo -e ${IGreen}$*${Color_off}
+}
+
+echo_err ()
+{
+    echo -e ${IRed}$*${Color_off}
+}
+
+echo_debug ()
+{
+    echo -e ${IYellow}$*${Color_off}
+}
+
+usage_msg ()
+{
+cat <<EOF
+usage: urm COMMAND [ARGS]
+
+The most commonly used urm commands are:
+    list        List all installed releases of Ubuntu
+    info        Show the information of a installed release of Ubuntu
+    install     Install specific release of Ubuntu
+    start       Switch to a installed release of Ubuntu
+    uninstall   Uninstall specific release of Ubuntu
+
+See 'urm help COMMAND' for more information on a specific command.
+EOF
+}
+
+list_command ()
+{
+    echo "Installed releases of Ubuntu:"
+    echo
+    echo "    "$(ls /etc/schroot/chroot.d/ | sed 's/  /\n/g')
+    echo
+}
+
+# Release info
+VERSION=0.2.0
+AUTHOR="Joseph Ku"
+EMAIL="chiehfang.ku@gmail.com"
+
+if [[ "root" = "$(whoami)" ]] ; then
+    sudo=""
+    src_path=/usr/local/src
+else
+    sudo="sudo"
+    src_path=$HOME/.src
+fi
+
+CODENAME="hardy"
+ARCH="i386"
+
+
+# Check whether Ubuntu system or not
+if [ -r "/usr/bin/lsb_release" ] && [ $(lsb_release -is) != "Ubuntu" ]; then
+    echo_err "urm only supports Ubuntu system!"
+    echo
+    exit 1
+fi
+
+# Check whether urm is running on urm
+if [ -z "$debian_chroot" ] && [ -r /etc/debian_chroot ]; then
+    echo_err "Do NOT run urm on urm!"
+fi
+
+if [ ! -n "$1" ]; then
+    usage_msg
+    exit 0
+fi
+
+case $1 in
+    "list")
+        list_command
+        exit 0
+        ;;
+    "info")
+        echo_err "Sorry...this command is not available. Coming soon!"
+        exit 1
+        ;;
+    "install")
+        command="install"
+        if [ -n "$2" ]; then
+            CODENAME=$2
+        fi
+        if [ -n "$3" ]; then
+            ARCH=$3
+        fi
+        ;;
+    "start")
+        if [ ! -n "$2" ]; then
+            echo "usage: urm start [installed_release]"
+            echo
+            echo_err "Please assign a installed release of Ubuntu!"
+            echo
+            exit 1
+        fi
+        schroot -c $2
+        exit 0 
+        ;;
+    "uninstall")
+        echo_err "Sorry...this command is not available. Coming soon!"
+        exit 1
+        ;;
+    "help")
+        echo_err "Sorry...this command is not available. Coming soon!"
+        exit 1
+        ;;
+esac
+
+CHROOT=$CODENAME-$ARCH
+CHROOT_PATH="/srv/chroot/$CHROOT"
+
+echo "Start to establish chroot environment:"
+echo ""
+
+if [ $USER = "root" ]; then
+    echo_err "Please don't use root user or sudo command to run this program!"
+    exit 1
+fi
+
+
+echo_info "Install required software packages..."
+$sudo apt-get -y install debootstrap schroot
+
+echo_info "Establish configuration file for schroot..."
+if [ $(uname -m) = "x86_64" ]; then
+    PERSONALITY="personality=linux32"
+else
+    PERSONALITY="#personality=linux32"
+fi
+
+cat > $CHROOT << EOF
+[$CHROOT]
+description=$CODENAME for $ARCH
+directory=$CHROOT_PATH
+
+# Enable this line if the host system is 64-bit
+# running on an amd64/x64 computer and the chroot
+# is 32-bit for i386. Otherwise, leave it disabled.
+$PERSONALITY
+
+root-users=$USER
+type=directory
+users=$USER
+EOF
+
+$sudo chown root.root $CHROOT
+$sudo mv $CHROOT /etc/schroot/chroot.d/.
+
+# Create base root filesystem
+echo_info "Create base root filesystem..."
+$sudo mkdir -p $CHROOT_PATH
+$sudo debootstrap --variant=buildd --arch $ARCH $CODENAME $CHROOT_PATH http://archive.ubuntu.com/ubuntu/
+
+# Comment mounting /home folder for using chroot safely
+if [ -e /etc/schroot/default/fstab ]; then
+    $sudo sed -i 's@^/home@#/home@g' /etc/schroot/default/fstab # schroot 1.4.7
+else
+    $sudo sed -i 's@^/home@#/home@g' /etc/schroot/mount-defaults
+fi
+
+# Copy sudoers file
+if [ -e /etc/schroot/default/copyfiles ]; then
+    $sudo sed -i '$a\/etc/sudoers' /etc/schroot/default/copyfiles # schroot 1.4.7
+else
+    $sudo sed -i '$a\/etc/sudoers' /etc/schroot/copyfiles-defaults
+fi
+
+# Copy default locale file
+if [ -e /etc/schroot/default/copyfiles ]; then
+    $sudo sed -i '$a\/etc/default/locale' /etc/schroot/default/copyfiles # schroot 1.4.7
+else
+    $sudo sed -i '$a\/etc/default/locale' /etc/schroot/copyfiles-defaults
+fi
+
+
+# Copy initial script
+cat > /tmp/init.sh << EOF
+#!/bin/sh
+
+apt-get -y --force-yes install ubuntu-minimal
+apt-get -y --force-yes install language-pack-en
+dpkg-reconfigure locales
+dpkg-reconfigure dash
+
+echo "export $(cat /etc/default/locale)" >> /etc/bash.bashrc
+echo ". /home/$USER/.bashrc" >> /etc/bash.bashrc
+EOF
+$sudo cp /tmp/init.sh $CHROOT_PATH/root/.
+
+# Initialize environment
+echo_info "Initialize environment..."
+
+
+cd /home # Change to an existed folder in chroot
+
+schroot -c $CHROOT -u root mkdir /home/$USER
+schroot -c $CHROOT -u root chown $USER.$USER /home/$USER
+
+$sudo cp $HOME/.bash* $CHROOT_PATH/home/$USER/.
+
+schroot -c $CHROOT -u root -- sed -i '$a\deb http://archive.ubuntu.com/ubuntu hardy universe' /etc/apt/sources.list
+schroot -c $CHROOT -u root -- sed -i '$a\deb http://archive.ubuntu.com/ubuntu hardy multiverse' /etc/apt/sources.list
+schroot -c $CHROOT -u root apt-get update
+
+# Run customized script
+schroot -c $CHROOT -u root sh /root/init.sh
+$sudo rm -f $CHROOT_PATH/root/init.sh
+
+cd -
+
+echo_info "Done."
+echo ""
+
+echo "Use 'urm start $CHROOT' to switch to the release"
+echo "Or 'urm start $CHROOT <command in chroot>' to launch a command in the release."
+
+exit 0
+
