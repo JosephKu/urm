@@ -15,8 +15,8 @@ Jeweler::Tasks.new do |gem|
   gem.name = "urm"
   gem.homepage = "http://github.com/JosephKu/urm"
   gem.license = "MIT"
-  gem.summary = %Q{TODO: one-line summary of your gem}
-  gem.description = %Q{TODO: longer description of your gem}
+  gem.summary = %Q{Ubuntu Release Manager (urm)}
+  gem.description = %Q{URM is Ubuntu Release Manager (urm). It manages Ubuntu releases and switch between them without rebooting PC or using virtual machine.}
   gem.email = "chiehfang.ku@gmail.com"
   gem.authors = ["Joseph Ku"]
   # Include your dependencies below. Runtime dependencies are required when using your gem,

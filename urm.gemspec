@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Joseph Ku"]
   s.date = %q{2011-04-01}
-  s.description = %q{TODO: longer description of your gem}
+  s.description = %q{URM is Ubuntu Release Manager (urm). It manages Ubuntu releases and switch between them without rebooting PC or using virtual machine.}
   s.email = %q{chiehfang.ku@gmail.com}
   s.extra_rdoc_files = [
     "LICENSE",
@@ -24,13 +24,14 @@ Gem::Specification.new do |s|
     "README.md",
     "Rakefile",
     "VERSION",
-    "src/urm"
+    "src/urm",
+    "urm.gemspec"
   ]
   s.homepage = %q{http://github.com/JosephKu/urm}
   s.licenses = ["MIT"]
   s.require_paths = ["lib"]
   s.rubygems_version = %q{1.6.2}
-  s.summary = %q{TODO: one-line summary of your gem}
+  s.summary = %q{Ubuntu Release Manager (urm)}
 
   if s.respond_to? :specification_version then
     s.specification_version = 3
