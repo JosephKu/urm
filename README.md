@@ -12,7 +12,12 @@ Requirements
 Installation
 ------------
 
-To install, initialize, and configure **urm**, follow these steps:
+Use RubyGems to install **urm**:
+
+    $ gem install urm
+
+
+To install, initialize, and configure **urm** manually, follow these steps:
 
 Make sure you have a bin/ directory in your home directory, and that it is included in your path:
 
