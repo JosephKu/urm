@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
 
-system("/usr/bin/env bash #{Gem.datadir('urm').split('/urm/data').first}/scripts/urm #{ARGV.join ' '}")
+system("/usr/bin/env bash #{Gem.datadir('urm').split('/data/urm').first}/scripts/urm #{ARGV.join ' '}")
 exit 0
 

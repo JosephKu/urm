@@ -142,7 +142,7 @@ list_command ()
 }
 
 # Release info
-VERSION=0.2.1
+VERSION=0.2.4
 AUTHOR="Joseph Ku"
 EMAIL="chiehfang.ku@gmail.com"
 
