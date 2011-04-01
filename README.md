@@ -26,7 +26,7 @@ Make sure you have a bin/ directory in your home directory, and that it is inclu
 
 Download the **urm** and ensure it is executable:
 
-    $ curl https://github.com/JosephKu/urm/raw/master/src/urm > ~/bin/urm
+    $ curl https://github.com/JosephKu/urm/raw/master/scripts/urm > ~/bin/urm
     $ chmod a+x ~/bin/urm
 
 
