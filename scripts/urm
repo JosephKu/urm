@@ -142,7 +142,7 @@ list_command ()
 }
 
 # Release info
-VERSION=0.2.4
+VERSION=0.2.6
 AUTHOR="Joseph Ku"
 EMAIL="chiehfang.ku@gmail.com"
 
@@ -157,13 +157,19 @@ fi
 CODENAME="hardy"
 ARCH="i386"
 
+#
 
 # Check whether Ubuntu system or not
-if [ -r "/usr/bin/lsb_release" ] && [ $(lsb_release -is) != "Ubuntu" ]; then
+if [ ! -r "/usr/bin/lsb_release" ]; then
+    echo_err "urm only supports Ubuntu system!"
+    echo
+    exit 1
+elif [ -r "/usr/bin/lsb_release" ] && [ $(lsb_release -is) != "Ubuntu" ]; then
     echo_err "urm only supports Ubuntu system!"
     echo
     exit 1
 fi
+
 
 # Check whether urm is running on urm
 if [ -z "$debian_chroot" ] && [ -r /etc/debian_chroot ]; then
